@@ -92,8 +92,7 @@ def pyramid_expand(img, dst_shape_hw): # dst_shape_hw is (rows, cols) of the tar
     # borderType=cv2.BORDER_REPLICATE is specified to be consistent.
     # dstsize is (cols, rows).
     return cv2.pyrUp(img_double, 
-                     dstsize=(dst_shape_hw[1], dst_shape_hw[0]), 
-                     borderType=cv2.BORDER_REPLICATE)
+                     dstsize=(dst_shape_hw[1], dst_shape_hw[0]))
 
 def generate_pyramid(img, type, level):
     pyramid = [0 for i in range(level)]
@@ -192,7 +191,9 @@ def fusion_based_method(img_path, level, img_name):
     clahe = cv2.createCLAHE(clipLimit=3, tileGridSize=(8, 8))
     illmu_3 = clahe.apply(np.uint8(illum * 255)) / 255
 
-    alpha = 2; phi = 250
+    alpha = 2
+    phi_degress = 250
+    phi = np.deg2rad(phi_degress)
 
     weight_brig_1 = np.exp(-(illum_1 - 0.5) ** 2 / 0.125)
     weight_brig_2 = np.exp(-(illmu_2 - 0.5) ** 2 / 0.125)
@@ -289,7 +290,7 @@ def fusion_based_method(img_path, level, img_name):
 
 def main():
     args = config_parse()
-    name_tmp = re.split('[./\\\]', args.input_path)
+    name_tmp = re.split(r'[./\\]', args.input_path)
     img_name = name_tmp[-2] + '_' + name_tmp[-1]
     fusion_based_method(args.input_path, args.level, img_name)
 
